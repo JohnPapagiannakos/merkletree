@@ -1,6 +1,8 @@
 #ifndef HASHINGFUNCTIONS_HPP
 #define HASHINGFUNCTIONS_HPP
 
+#include "../Types.hpp"
+
 #include <openssl/sha.h>
 #include <iostream>
 #include <iomanip>
@@ -8,7 +10,7 @@
 #include <string>
 
 // originally found in https://stackoverflow.com/a/10632725
-std::string sha256(const std::string str)
+HASHTYPE sha256(const HASHTYPE str)
 {
     unsigned char hash[SHA256_DIGEST_LENGTH];
     SHA256_CTX sha256;
@@ -23,10 +25,15 @@ std::string sha256(const std::string str)
     return ss.str();
 }
 
-// Quick & Dirty hashing based on Szudzik's function.
-int pseudo_hash(const int a, const int b)
+HASHTYPE concat(const HASHTYPE A, const HASHTYPE B)
 {
-    return a >= b ? a * a + a + b : a + b * b;
+    return A + B;
 }
+
+// // Quick & Dirty hashing based on Szudzik's function.
+// int pseudo_hash(const int a, const int b)
+// {
+//     return a >= b ? a * a + a + b : a + b * b;
+// }
 
 #endif

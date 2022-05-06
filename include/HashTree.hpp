@@ -6,27 +6,16 @@
 #include <queue>
 
 #include "Node.hpp"
+#include "Types.hpp"
 #include "Hash/HashingFunctions.hpp"
 
-template <typename T, typename V>
+template <typename T>
 class HTree
 {
     public:
     HTree() : _root(NULL) {};
 
-    // void insert(T key, T value)
-    // {
-    //     if (_root != NULL)
-    //         insert(key, value, _root);
-    //     else
-    //     {
-    //         _root = new Node2<T>(key, value);
-    //         _root->left = NULL;
-    //         _root->right = NULL;
-    //     }
-    // }
-
-    void construct_tree(std::vector<std::pair<T,V>> &datablocks)
+    void construct_tree(std::vector<std::pair<T,HASHTYPE>> &datablocks)
     {
         int size = datablocks.size();
         if(size < 1) return;
@@ -42,12 +31,15 @@ class HTree
         // Create non-leaf nodes & initialize their values to 0.
         for (int n = datablocks[size - 1].first + 1; n < datablocks[size - 1].first + 1 + non_leafs_num; n++)
         {
+            HASHTYPE hash = ""; // empty string
             if (_root != NULL)
-                insert(n, 0, _root);
+            {
+                insert(n, hash, _root);
+            }
             else
             {
-                _root = new Node2<T,V>(n, 0);
-                _root->left = NULL;
+                _root = new Node2<T, HASHTYPE>(n, hash);
+                _root->left  = NULL;
                 _root->right = NULL;
             }
         }
@@ -55,18 +47,15 @@ class HTree
         // Insert leafs
         for (int n = 0; n < size; n++)
         {
-            if (_root != NULL)
-                insert(datablocks[n].first, datablocks[n].second, _root);
-            else
-            {
-                _root = new Node2<T, V>(datablocks[n].first, datablocks[n].second);
-                _root->left = NULL;
-                _root->right = NULL;
-            }
+            HASHTYPE hash = sha256(datablocks[n].second);
+       
+            _root = new Node2<T, HASHTYPE>(datablocks[n].first, hash);
+            _root->left  = NULL;
+            _root->right = NULL;
         }
     }
 
-    int compute_hash(void)
+    HASHTYPE compute_hash(void)
     {
         compute_hash(_root);
         return _root->value;
@@ -102,17 +91,17 @@ class HTree
     ~HTree() {destroy_tree();};
 
     private:
-    Node2<T,V> *_root;
+    Node2<T,HASHTYPE> *_root;
 
-    void insert(T key, V value, Node2<T,V> *leaf)
+    void insert(T key, HASHTYPE value, Node2<T,HASHTYPE> *leaf)
     {
-        std::queue<Node2<T,V>*> waitingNodes;
+        std::queue<Node2<T,HASHTYPE>*> waitingNodes;
 
         waitingNodes.push(leaf);
 
         while (!waitingNodes.empty())
         {
-            Node2<T,V> *firstNode = waitingNodes.front();
+            Node2<T,HASHTYPE> *firstNode = waitingNodes.front();
             waitingNodes.pop();
 
             if (firstNode->left != NULL)
@@ -121,7 +110,7 @@ class HTree
             }
             else
             {
-                firstNode->left = new Node2<T,V>(key, value);
+                firstNode->left = new Node2<T,HASHTYPE>(key, value);
                 firstNode->left->left = NULL;
                 firstNode->left->right = NULL;
                 return;
@@ -133,7 +122,7 @@ class HTree
             }
             else
             {
-                firstNode->right = new Node2<T,V>(key, value);
+                firstNode->right = new Node2<T,HASHTYPE>(key, value);
                 firstNode->right->left = NULL;
                 firstNode->right->right = NULL;
                 return;
@@ -141,27 +130,26 @@ class HTree
         }
     }
 
-    int compute_hash(Node2<T,V> *leaf)
+    HASHTYPE compute_hash(Node2<T, HASHTYPE> *leaf)
     {
         // Compute hashes recursively
         if (leaf == NULL)
         {
-            return 0;
+            return std::string();
         }
         else
         {
-            int l_hash = compute_hash(leaf->left);
-            int r_hash = compute_hash(leaf->right);
-            if(!(l_hash == r_hash && l_hash == 0))
+            HASHTYPE l_hash = compute_hash(leaf->left);
+            HASHTYPE r_hash = compute_hash(leaf->right);
+            if (!(l_hash.empty() == 1 && r_hash.empty() == 1))
             {
-                leaf->value = pseudo_hash(l_hash, r_hash);
-            }
+                leaf->value = sha256(concat(l_hash, r_hash));
+            }            
             return leaf->value;
-            // return hash(leaf->value) + concat(l_hash, r_hash)
         }
     }
 
-    void topView(Node2<T, V> *leaf)
+    void topView(Node2<T, HASHTYPE> *leaf)
     {
         if (leaf != NULL)
         {
@@ -171,7 +159,7 @@ class HTree
         }
     }
 
-    void destroy_tree(Node2<T,V> *leaf)
+    void destroy_tree(Node2<T,HASHTYPE> *leaf)
     {
         if (leaf != NULL)
         {
@@ -181,7 +169,7 @@ class HTree
         }
     }
 
-    size_t size(Node2<T,V> *leaf)
+    size_t size(Node2<T,HASHTYPE> *leaf)
     {
         if (leaf == NULL)
         {
@@ -193,7 +181,7 @@ class HTree
         }
     }
 
-    size_t maxDepth(Node2<T,V> *leaf)
+    size_t maxDepth(Node2<T,HASHTYPE> *leaf)
     {
         if (leaf == NULL)
         {
