@@ -7,6 +7,7 @@
 #include <sstream>
 #include <string>
 
+// originally found in https://stackoverflow.com/a/10632725
 std::string sha256(const std::string str)
 {
     unsigned char hash[SHA256_DIGEST_LENGTH];
