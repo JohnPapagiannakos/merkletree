@@ -6,50 +6,67 @@
 #include "Hash/HashingFunctions.hpp"
 #include "HashTree.hpp"
 
+std::string random_string(size_t length)
+{
+    auto randchar = []() -> char
+    {
+        const char charset[] =
+            "0123456789"
+            "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+            "abcdefghijklmnopqrstuvwxyz";
+        const size_t max_index = (sizeof(charset) - 1);
+        return charset[rand() % max_index];
+    };
+    std::string str(length, 0);
+    std::generate_n(str.begin(), length, randchar);
+    return str;
+}
+
 int main()
 {
-    HTree<int, int> HT;
+    HTree<int> HT;
 
-    std::vector<std::pair<int, int>> datablocks;
-    std::pair<int, double> tmp;
+    std::vector<std::pair<int, HASHTYPE>> datablocks;
 
     const int blocks_num = 7;
 
-    // srand(0);
-    srand(time(0));
+    srand(0);
+    // srand(time(0));
     for(int l=0; l<blocks_num; l++)
     {
-        int hash = rand() % 10;
-        tmp = std::make_pair(l, hash);
+        HASHTYPE hash = random_string(rand() % 64);
+        std::pair<int, HASHTYPE> tmp = std::make_pair(l, hash);
         datablocks.push_back(tmp);
     }
     HT.construct_tree(datablocks);
     std::cout << HT.compute_hash() << std::endl;
-    HT.topview();
-
-    // for (int l = 0; l < blocks_num; l++)
-    // {
-    //     std::cout << datablocks[l].first << " " << datablocks[l].second << std::endl;
-    // }
+    // HT.topview();
 
     // test hashing
-    int pair_01, pair_23, pair_45, pair_67;
-    int pair_0123, pair_4567;
-    int pair_root;
+    HASHTYPE H01, H23, H45, H67;
+    HASHTYPE H0123, H4567;
+    HASHTYPE Hroot;
 
-    pair_01 = pseudo_hash(datablocks[0].second, datablocks[1].second);
-    pair_23 = pseudo_hash(datablocks[2].second, datablocks[3].second);
-    pair_45 = pseudo_hash(datablocks[4].second, datablocks[5].second);
-    pair_67 = pseudo_hash(datablocks[6].second, 0);
+    // Hash each transaction ID before testing
+    for (int l = 0; l < blocks_num; l++)
+    {
+        datablocks[l].second = sha256(datablocks[l].second);
+        // std::cout << l << "," << datablocks[l].second << std::endl;
+    }
 
-    pair_0123 = pseudo_hash(pair_01, pair_23);
-    pair_4567 = pseudo_hash(pair_45, pair_67);
+    H01 = sha256(concat(datablocks[0].second, datablocks[1].second));
+    H23 = sha256(concat(datablocks[2].second, datablocks[3].second));
+    H45 = sha256(concat(datablocks[4].second, datablocks[5].second));
+    H67 = sha256(concat(datablocks[6].second, ""));
 
-    pair_root = pseudo_hash(pair_0123, pair_4567);
+    H0123 = sha256(concat(H01, H23));
+    H4567 = sha256(concat(H45, H67));
 
-    std::cout << pair_root << std::endl;
+    Hroot = sha256(concat(H0123, H4567));
 
-    if(pair_root == HT.compute_hash())
+    std::cout << Hroot << std::endl;
+
+    if (Hroot.compare(HT.compute_hash())==0)
         std::cout << "test succeed!" << std::endl;
     else
         std::cout << "test failed!" << std::endl;
