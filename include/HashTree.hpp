@@ -48,10 +48,18 @@ class HTree
         for (int n = 0; n < size; n++)
         {
             HASHTYPE hash = sha256(datablocks[n].second);
-       
-            _root = new Node2<T, HASHTYPE>(datablocks[n].first, hash);
-            _root->left  = NULL;
-            _root->right = NULL;
+
+            if (_root != NULL)
+            {
+                insert(n, hash, _root);
+            }
+            else
+            {
+                _root = new Node2<T, HASHTYPE>(datablocks[n].first, hash);
+                // std::cout << "<" << _root->key << "," << _root->value << ">" << std::endl;
+                _root->left = NULL;
+                _root->right = NULL;
+            }
         }
     }
 
@@ -130,22 +138,23 @@ class HTree
         }
     }
 
-    HASHTYPE compute_hash(Node2<T, HASHTYPE> *leaf)
+    HASHTYPE compute_hash(Node2<T, HASHTYPE> *node)
     {
         // Compute hashes recursively
-        if (leaf == NULL)
+        if (node == NULL)
         {
-            return std::string();
+            return "";
         }
         else
         {
-            HASHTYPE l_hash = compute_hash(leaf->left);
-            HASHTYPE r_hash = compute_hash(leaf->right);
-            if (!(l_hash.empty() == 1 && r_hash.empty() == 1))
+            HASHTYPE l_hash = compute_hash(node->left);
+            HASHTYPE r_hash = compute_hash(node->right);
+            if (!(l_hash.empty() && r_hash.empty())) // if node is not a leaf-node
             {
-                leaf->value = sha256(concat(l_hash, r_hash));
-            }            
-            return leaf->value;
+                node->value = sha256(concat(l_hash, r_hash));
+            }
+            // std::cout << "<" << node->key << "," << node->value << ">" << std::endl;
+            return node->value;
         }
     }
 
