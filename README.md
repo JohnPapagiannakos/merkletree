@@ -26,11 +26,11 @@ This procedure is repeated until we reach the root node.
     H({1,2})      H({3,4})       H({5,6})      H({7,8})
       /   \         /   \          /   \         /   \
      /     \       /     \        /     \       /     \
- H({1})  H({2}) H({3}) H({4})  H({5}) H({6}) H({7}) H({8})      ---- leaf-nodes
-    
+  H(1)    H(2)  H(3)    H(4)   H(5)   H(6)   H(7)   H(8)      ---- leaf-nodes
+
     |      |      |      |      |      |      |      | 
   
-  B(1)   B(2)   B(3)   B(4)   B(5)   B(6)   B(7)   B(8)      ---- datablocks
+  B(1)    B(2)  B(3)    B(4)   B(5)   B(6)   B(7)   B(8)      ---- datablocks
   
 
 
