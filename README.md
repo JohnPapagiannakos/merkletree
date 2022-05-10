@@ -14,12 +14,12 @@ Then, each hash of the left (L) and the right (R) child is concatenated (denoted
 This procedure is repeated until we reach the root node.
 
 ```bash
-                      H({1234,5678})                           ---- root
+                      H({1234,5678})                           ---- root node
                         /         \
                       /             \
                     /                 \
                   /                     \
-           H({12,34})                 H({12,34})
+           H({12,34})                 H({56,78})
             /      \                     /    \            
            /        \                   /      \
           /          \                 /        \
