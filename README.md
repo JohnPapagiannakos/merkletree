@@ -33,6 +33,7 @@ This procedure is repeated until we reach the root node.
 
 
 ## Creator
-<li> Yannis Marios Papagiannakos </li>
+* Yannis Marios Papagiannakos
 
 ## Requirements
+* [openssl](https://github.com/openssl/openssl "openssl") library
