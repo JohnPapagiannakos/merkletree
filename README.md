@@ -9,7 +9,7 @@ A hash tree allows efficient and secure verification of the contents of a large 
 
 ## A short example
 Assume 8 data blocks, denoted as B(i) for i=1...8. 
-Each block is hashed by a hashing function, denoted as H(·) (in this code we use SHA256 hash algorithm) and stored as a leaf node in a binary tree as shown below.
+Each block is hashed by a hashing function, denoted as H(·) (in this code we use SHA256 hash algorithm), and is stored as a leaf node in a binary tree as shown below.
 Then, each hash of the left (L) and the right (R) child is concatenated (denoted here as {L,R}) and rehashed. This value is stored in their respective parent node.
 This procedure is repeated until we reach the root node.
 
