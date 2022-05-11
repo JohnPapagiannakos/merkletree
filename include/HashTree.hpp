@@ -26,7 +26,6 @@ class HTree
         std::sort(datablocks.begin(), datablocks.end());
 
         int non_leafs_num = std::pow(2, height-1) - 1;
-        std::cout << non_leafs_num << std::endl;
 
         // Create non-leaf nodes & initialize their values to 0.
         for (int n = datablocks[size - 1].first + 1; n < datablocks[size - 1].first + 1 + non_leafs_num; n++)
