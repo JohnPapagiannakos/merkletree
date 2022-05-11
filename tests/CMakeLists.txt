@@ -1,8 +1,6 @@
 Project(examples)
 
 SET(TEST_SRC_FILE_NAMES 
-                        test_btree
-                        test_bst
                         test_htree
                         test_sha256
                         )
