@@ -7,6 +7,9 @@
 
 int main()
 {
-    std::cout << sha256("1234567890_1") << std::endl;
+    std::cout << sha256("text 2 be hashed") << std::endl;
+
+    std::cout << sha256(concat("text 2 be hashed", "new")) << std::endl;
+
     return 0;
 }

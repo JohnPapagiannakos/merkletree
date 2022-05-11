@@ -2,6 +2,7 @@ Project(examples)
 
 SET(TEST_SRC_FILE_NAMES 
                         test_htree
+                        test_htree2
                         test_sha256
                         )
 
