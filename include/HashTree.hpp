@@ -42,7 +42,7 @@ class HTree
             T key = (1 << (height - 1)) + n;
             if (_root != NULL)
             {
-                insert(key, hash, _root);
+                sortedinsert(key, hash, _root);
             }
             else
             {
@@ -59,7 +59,7 @@ class HTree
 
             if (_root != NULL)
             {
-                insert(n, hash, _root);
+                sortedinsert(n, hash, _root);
             }
             else
             {
@@ -109,7 +109,7 @@ class HTree
     private:
     Node2<T,HASHTYPE> *_root;
 
-    void insert(T key, HASHTYPE value, Node2<T,HASHTYPE> *leaf)
+    void sortedinsert(T key, HASHTYPE value, Node2<T,HASHTYPE> *leaf)
     {
         std::queue<Node2<T,HASHTYPE>*> waitingNodes;
 
@@ -142,6 +142,36 @@ class HTree
                 firstNode->right->left = NULL;
                 firstNode->right->right = NULL;
                 return;
+            }
+        }
+    }
+
+    void insert(T key, HASHTYPE value, Node2<T, HASHTYPE> *leaf)
+    {
+        if (key < leaf->key)
+        {
+            if (leaf->left != NULL)
+            {
+                insert(key, value, leaf->left);
+            }
+            else
+            {
+                leaf->left = new Node2<T, HASHTYPE>(key, value);
+                leaf->left->left = NULL;
+                leaf->left->right = NULL;
+            }
+        }
+        else if (key >= leaf->key)
+        {
+            if (leaf->right != NULL)
+            {
+                insert(key, value, leaf->right);
+            }
+            else
+            {
+                leaf->right = new Node2<T, HASHTYPE>(key, value);
+                leaf->right->left = NULL;
+                leaf->right->right = NULL;
             }
         }
     }
