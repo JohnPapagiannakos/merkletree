@@ -15,6 +15,14 @@ class HTree
     public:
     HTree() : _root(NULL) {};
 
+    void insert(T key, HASHTYPE hash)
+    {
+        if (_root != NULL)
+        {
+            insert(key, sha256(hash), _root);
+        }
+    }
+
     void construct_tree(std::vector<std::pair<T,HASHTYPE>> &datablocks)
     {
         int size = datablocks.size();
@@ -25,19 +33,20 @@ class HTree
         // sort blocks first
         std::sort(datablocks.begin(), datablocks.end());
 
-        int non_leafs_num = std::pow(2, height-1) - 1;
+        int non_leafs_num = (1 << (height - 1)) - 1;
 
         // Create non-leaf nodes & initialize their values to 0.
-        for (int n = datablocks[size - 1].first + 1; n < datablocks[size - 1].first + 1 + non_leafs_num; n++)
+        for (int n = 0; n < non_leafs_num; n++)
         {
             HASHTYPE hash = ""; // empty string
+            T key = (1 << (height - 1)) + n;
             if (_root != NULL)
             {
-                insert(n, hash, _root);
+                insert(key, hash, _root);
             }
             else
             {
-                _root = new Node2<T, HASHTYPE>(n, hash);
+                _root = new Node2<T, HASHTYPE>(key, hash);
                 _root->left  = NULL;
                 _root->right = NULL;
             }
@@ -163,7 +172,8 @@ class HTree
         {
             topView(leaf->left);
             topView(leaf->right);
-            std::cout << "<" << leaf->key << "," << leaf->value << ">\t";
+            // std::cout << "<" << leaf->key << "," << leaf->value << ">\t";
+            std::cout << "<" << leaf->key << ">\t";
         }
     }
 
